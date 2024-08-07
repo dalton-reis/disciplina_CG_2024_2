@@ -20,7 +20,7 @@ Faça o seu trabalho, cópias receberão nota zero. O professor pode a qualquer 
 
 O GitHub de cada equipe vai ser criado pelo professor após as definições das equipes. Então não esqueça de definir a sua equipe usando o <!--[AVA3 Matutino Equipes] ou -->[AVA3 Noturno Equipes], onde somente um aluno da equipe posta o **nome completo** dos integrantes e os **usuários do GitHub**. Aconselhasse fortemente manter os integrantes que compõem a equipe até o final do semestre.  
 
-Todos os trabalhos serão desenvolvidos em equipe (**máximo cinco alunos**) e devem ser postados no GitHub até a data definida no [cronograma](cronograma.md "cronograma").  
+Todos os trabalhos serão desenvolvidos em equipe (**máximo quatro alunos**) e devem ser postados no GitHub até a data definida no [cronograma](cronograma.md "cronograma").  
 
 ## Rabiscos - aulaRabiscos.drawio.svg
 
