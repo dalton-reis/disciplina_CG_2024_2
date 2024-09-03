@@ -1,0 +1,15 @@
+@startuml
+!include ./Poligono.puml
+!include ./SrPalito.puml
+!include ./Mundo.puml
+!include ./Retangulo.puml
+!include ./Objeto.puml
+!include ./SplineBezier.puml
+!include ./SplineInter.puml
+!include ./Ponto.puml
+!include ./Circulo.puml
+!include ./SegReta.puml
+!include ./Program.puml
+!include ./obj/Debug/net8.0/.NETCoreApp,Version=v8.0.AssemblyAttributes.puml
+!include ./obj/Debug/net8.0/CG_N2_Exemplo.AssemblyInfo.puml
+@enduml

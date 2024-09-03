@@ -1,0 +1,10 @@
+@startuml
+class SplineBezier {
+    + SplineQtdPto(inc:int) : void
+    + SplineBezier(_paiRef:Objeto, _rotulo:char)
+    + Atualizar() : void
+    + AtualizarSpline(ptoInc:Ponto4D, proximo:bool) : void
+    + <<override>> ToString() : string
+}
+Objeto <|-- SplineBezier
+@enduml
