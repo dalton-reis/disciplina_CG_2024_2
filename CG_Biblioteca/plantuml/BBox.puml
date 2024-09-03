@@ -1,0 +1,16 @@
+@startuml
+class BBox {
+    + BBox()
+    + Atualizar(matriz:Transformacao4D, pontosLista:List<Ponto4D>) : void
+    + Dentro(pto:Ponto4D) : bool
+    + ObterMenorX : double <<get>>
+    + ObterMenorY : double <<get>>
+    + ObterMenorZ : double <<get>>
+    + ObterMaiorX : double <<get>>
+    + ObterMaiorY : double <<get>>
+    + ObterMaiorZ : double <<get>>
+    + Desenhar(matrizGrafo:Transformacao4D) : void
+    + <<override>> ToString() : string
+}
+BBox --> "ObterCentro" Ponto4D
+@enduml

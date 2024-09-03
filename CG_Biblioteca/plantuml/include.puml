@@ -1,0 +1,14 @@
+@startuml
+!include ./CameraPerspective.puml
+!include ./Utilitario.puml
+!include ./Transformacao4D.puml
+!include ./BBox.puml
+!include ./Ponto4D.puml
+!include ./Matematica.puml
+!include ./Shaders/Shader.puml
+!include ./Shaders/Texture.puml
+!include ./obj/release/net8.0/.NETCoreApp,Version=v8.0.AssemblyAttributes.puml
+!include ./obj/release/net8.0/CG_Biblioteca.AssemblyInfo.puml
+!include ./obj/Debug/net8.0/.NETCoreApp,Version=v8.0.AssemblyAttributes.puml
+!include ./obj/Debug/net8.0/CG_Biblioteca.AssemblyInfo.puml
+@enduml
