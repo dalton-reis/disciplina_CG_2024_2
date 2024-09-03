@@ -14,6 +14,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Desktop;
 using System;
 using System.Collections.Generic;
+using OpenTK.Mathematics;
 
 namespace gcgcg
 {
@@ -38,6 +39,7 @@ namespace gcgcg
     private Shader _shaderVermelha;
     private Shader _shaderVerde;
     private Shader _shaderAzul;
+    private Shader _shaderCiano;
 
     private bool mouseMovtoPrimeiro = true;
     private Ponto4D mouseMovtoUltimo;
@@ -97,6 +99,7 @@ namespace gcgcg
       _shaderVermelha = new Shader("Shaders/shader.vert", "Shaders/shaderVermelha.frag");
       _shaderVerde = new Shader("Shaders/shader.vert", "Shaders/shaderVerde.frag");
       _shaderAzul = new Shader("Shaders/shader.vert", "Shaders/shaderAzul.frag");
+      _shaderCiano = new Shader("Shaders/shader.vert", "Shaders/shaderCiano.frag");
       #endregion
 
       #region Eixos: SRU  
@@ -122,7 +125,6 @@ namespace gcgcg
       #endregion
       #region NÃO USAR: declara um objeto filho ao polígono
       objetoSelecionado = new Ponto(objetoSelecionado, ref rotuloAtual, new Ponto4D(0.50, 0.75));
-      objetoSelecionado.ToString();
       #endregion
       #region Objeto: retângulo  
       objetoSelecionado = new Retangulo(mundo, ref rotuloAtual, new Ponto4D(-0.25, 0.25), new Ponto4D(-0.75, 0.75))
@@ -192,12 +194,21 @@ namespace gcgcg
       var estadoTeclado = KeyboardState;
       if (estadoTeclado.IsKeyDown(Keys.Escape))
         Close();
-      if (estadoTeclado.IsKeyPressed(Keys.R))
+
+      if (estadoTeclado.IsKeyPressed(Keys.Space))
+        GrafoCenaProximo();
+        
+      if (estadoTeclado.IsKeyPressed(Keys.P) && objetoSelecionado != null)
       {
-        //FIXME: Spline limpa os pontos da Spline, mas não limpa pontos e poliedro de controle 
-        objetoSelecionado.PontosApagar();
+        Console.WriteLine(objetoSelecionado);
       }
-      if (estadoTeclado.IsKeyPressed(Keys.Right))
+
+      if (estadoTeclado.IsKeyPressed(Keys.C) && objetoSelecionado != null)
+      {
+        objetoSelecionado.ShaderObjeto = _shaderCiano;
+      }
+
+      if (estadoTeclado.IsKeyPressed(Keys.Right) && objetoSelecionado != null)
       {
         if (objetoSelecionado.PontosListaTamanho > 0)
         {
@@ -205,15 +216,11 @@ namespace gcgcg
           objetoSelecionado.ObjetoAtualizar();
         }
       }
-      if (estadoTeclado.IsKeyPressed(Keys.P))
+
+      if (estadoTeclado.IsKeyPressed(Keys.R) && objetoSelecionado != null)
       {
-        Console.WriteLine(objetoSelecionado);
-      }
-      if (estadoTeclado.IsKeyPressed(Keys.Space))
-        GrafoCenaProximo();
-      if (estadoTeclado.IsKeyPressed(Keys.C))
-      {
-        objetoSelecionado.ShaderObjeto = new Shader("Shaders/shader.vert", "Shaders/shaderCiano.frag");
+        //FIXME: Spline limpa os pontos da Spline, mas não limpa pontos e poliedro de controle 
+        objetoSelecionado.PontosApagar();
       }
       #endregion
 
@@ -273,6 +280,7 @@ namespace gcgcg
       GL.DeleteProgram(_shaderVermelha.Handle);
       GL.DeleteProgram(_shaderVerde.Handle);
       GL.DeleteProgram(_shaderAzul.Handle);
+      GL.DeleteProgram(_shaderCiano.Handle);
 
       base.OnUnload();
     }
@@ -281,14 +289,18 @@ namespace gcgcg
     private void Gizmo_Sru3D()
     {
 #if CG_OpenGL && !CG_DirectX
+      var transform = Matrix4.Identity;
       GL.BindVertexArray(_vertexArrayObject_sruEixos);
       // EixoX
+      _shaderVermelha.SetMatrix4("transform", transform);
       _shaderVermelha.Use();
       GL.DrawArrays(PrimitiveType.Lines, 0, 2);
       // EixoY
+      _shaderVerde.SetMatrix4("transform", transform);
       _shaderVerde.Use();
       GL.DrawArrays(PrimitiveType.Lines, 2, 2);
       // EixoZ
+      _shaderAzul.SetMatrix4("transform", transform);
       _shaderAzul.Use();
       GL.DrawArrays(PrimitiveType.Lines, 4, 2);
 #elif CG_DirectX && !CG_OpenGL

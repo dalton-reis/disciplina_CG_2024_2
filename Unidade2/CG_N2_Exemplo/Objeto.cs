@@ -24,6 +24,7 @@ namespace gcgcg
     private Shader _shaderObjeto = new("Shaders/shader.vert", "Shaders/shaderBranca.frag");
     public Shader ShaderObjeto { set => _shaderObjeto = value; }
 
+    // Vértices do objeto TODO: o objeto mundo deveria ter estes atributos abaixo?
     protected List<Ponto4D> pontosLista = [];
     public int PontosListaTamanho { get => pontosLista.Count; }
     private int _vertexBufferObject;
@@ -105,6 +106,8 @@ namespace gcgcg
 
       if (paiRef != null)
       {
+        // ## 14. Grafo de cena: transformação
+        // Considere a transformação global ao transformar (translação/escala/rotação) um polígono “pai”.  
         matrizGrafo = matrizGrafo.MultiplicarMatriz(matriz);
         _shaderObjeto.SetMatrix4("transform", matrizGrafo.ObterDadosOpenTK());
         _shaderObjeto.Use();
@@ -187,9 +190,9 @@ namespace gcgcg
       return null;
     }
 
-    public Dictionary<char,Objeto> GrafocenaAtualizar(Dictionary<char,Objeto> lista)
+    public Dictionary<char, Objeto> GrafocenaAtualizar(Dictionary<char, Objeto> lista)
     {
-      lista.Add(rotulo,this);
+      lista.Add(rotulo, this);
       foreach (var objeto in objetosLista)
       {
         lista = objeto.GrafocenaAtualizar(lista);
@@ -222,7 +225,7 @@ namespace gcgcg
       GL.DeleteBuffer(_vertexBufferObject);
       GL.DeleteVertexArray(_vertexArrayObject);
 
-      GL.DeleteProgram(_shaderObjeto.Handle);
+      // GL.DeleteProgram(_shaderObjeto.Handle);
     }
 
 #if CG_Debug
