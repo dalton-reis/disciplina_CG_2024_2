@@ -1,0 +1,6 @@
+@startuml
+!include ./Window.puml
+!include ./Program.puml
+!include ./obj/Debug/net8.0/.NETCoreApp,Version=v8.0.AssemblyAttributes.puml
+!include ./obj/Debug/net8.0/1-CreatingAWindow.AssemblyInfo.puml
+@enduml
