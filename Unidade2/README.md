@@ -45,11 +45,11 @@ Usando o fonte do projeto: **2-HelloTriangle** faça.
   fundo:  
     R: 115      <!-- 115/256 = 0.44921875 -->
     G: 252      <!-- 252/256 = 0.98437500 -->
-    B: 214      <!-- 214/256 = 0.83593750 -->  
+    B: 214      <!-- 214/256 = 0.83593750 -->
   triângulo:  
-    R: 122      <!-- 122/256 = 0.47656250 -->
+    R: 122      <!-- 122/256 = 0.47656250 -->  
     G: 129      <!-- 129/256 = 0.50390625 -->
-    B: 255      <!-- 255/256 = 0.99609375 -->  
+    B: 255      <!-- 255/256 = 0.99609375 -->
 
 Antes - Depois  
 ![2-HelloTriangle_antes](OpenTK/Chapter1/2-HelloTriangle/2-HelloTriangle_antes.png) ![2-HelloTriangle_depois](OpenTK/Chapter1/2-HelloTriangle/2-HelloTriangle_depois.png)  

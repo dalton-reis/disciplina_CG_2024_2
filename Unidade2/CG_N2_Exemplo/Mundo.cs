@@ -26,15 +26,17 @@ namespace gcgcg
     private Dictionary<char, Objeto> grafoLista = [];
     private Objeto objetoSelecionado = null;
 
+
+#if CG_Gizmo
     private readonly float[] _sruEixos =
     [
        0.0f,  0.0f,  0.0f, /* X- */      0.5f,  0.0f,  0.0f, /* X+ */
        0.0f,  0.0f,  0.0f, /* Y- */      0.0f,  0.5f,  0.0f, /* Y+ */
        0.0f,  0.0f,  0.0f, /* Z- */      0.0f,  0.0f,  0.5f  /* Z+ */
     ];
-
     private int _vertexBufferObject_sruEixos;
     private int _vertexArrayObject_sruEixos;
+#endif
 
     private Shader _shaderVermelha;
     private Shader _shaderVerde;
@@ -84,6 +86,17 @@ namespace gcgcg
       return false;
     }
 
+    private void GrafoCenaImprimir()
+    {
+      GrafocenaAtualizar();
+      Console.WriteLine();
+      foreach (var par in grafoLista)
+      {
+        // Console.WriteLine($"Chave: {par.Key}, Valor: {par.Value}");
+        Console.WriteLine($"Chave: {par.Key}");
+      }
+    }
+
     protected override void OnLoad()
     {
       base.OnLoad();
@@ -102,6 +115,7 @@ namespace gcgcg
       _shaderCiano = new Shader("Shaders/shader.vert", "Shaders/shaderCiano.frag");
       #endregion
 
+#if CG_Gizmo
       #region Eixos: SRU  
       _vertexBufferObject_sruEixos = GL.GenBuffer();
       GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject_sruEixos);
@@ -111,6 +125,7 @@ namespace gcgcg
       GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
       GL.EnableVertexAttribArray(0);
       #endregion
+#endif
 
       #region Objeto: polígono qualquer  
       List<Ponto4D> pontosPoligono =
@@ -156,15 +171,12 @@ namespace gcgcg
         ShaderObjeto = new Shader("Shaders/shader.vert", "Shaders/shaderAmarela.frag")
       };
       #endregion
-
       #region Objeto: SrPalito  
       objetoSelecionado = new SrPalito(mundo, ref rotuloAtual);
       #endregion
-
       #region Objeto: SplineBezier
       objetoSelecionado = new SplineBezier(mundo, ref rotuloAtual);
       #endregion
-
       #region Objeto: SplineInter
       objetoSelecionado = new SplineInter(mundo, ref rotuloAtual);
       #endregion
@@ -197,10 +209,16 @@ namespace gcgcg
 
       if (estadoTeclado.IsKeyPressed(Keys.Space))
         GrafoCenaProximo();
-        
-      if (estadoTeclado.IsKeyPressed(Keys.P) && objetoSelecionado != null)
+
+      if (estadoTeclado.IsKeyPressed(Keys.G))
+        GrafoCenaImprimir();
+
+      if (estadoTeclado.IsKeyPressed(Keys.P))
       {
-        Console.WriteLine(objetoSelecionado);
+        if (objetoSelecionado != null)
+          Console.WriteLine(objetoSelecionado);
+        else
+          Console.WriteLine("objetoSelecionado: MUNDO \n__________________________________\n");
       }
 
       if (estadoTeclado.IsKeyPressed(Keys.C) && objetoSelecionado != null)
