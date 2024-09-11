@@ -2,7 +2,7 @@ using System;
 
 namespace CG_Biblioteca
 {
-  public abstract class Utilitario
+  public static class Utilitario
   {
     public static char CharProximo(char atual)
     {

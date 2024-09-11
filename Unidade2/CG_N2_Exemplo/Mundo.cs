@@ -52,51 +52,6 @@ namespace gcgcg
       mundo ??= new Objeto(null, ref rotuloAtual); //padrão Singleton
     }
 
-    private void GrafocenaAtualizar()
-    {
-      grafoLista.Clear();
-      grafoLista = mundo.GrafocenaAtualizar(grafoLista);
-    }
-
-    private bool GrafoCenaProximo()
-    {
-      GrafocenaAtualizar();
-      var itGrafo = grafoLista.GetEnumerator();
-      itGrafo.MoveNext();
-      itGrafo.MoveNext();
-      if (objetoSelecionado == null)
-      {
-        objetoSelecionado = itGrafo.Current.Value;
-        return false;
-      }
-      if (objetoSelecionado.Rotulo == '@')
-      {
-        objetoSelecionado = itGrafo.Current.Value;
-        return true;
-      }
-      do
-      {
-        if (itGrafo.Current.Key == objetoSelecionado.Rotulo)
-        {
-          itGrafo.MoveNext();
-          objetoSelecionado = itGrafo.Current.Value;
-          return true;
-        }
-      } while (itGrafo.MoveNext());
-      return false;
-    }
-
-    private void GrafoCenaImprimir()
-    {
-      GrafocenaAtualizar();
-      Console.WriteLine();
-      foreach (var par in grafoLista)
-      {
-        // Console.WriteLine($"Chave: {par.Key}, Valor: {par.Value}");
-        Console.WriteLine($"Chave: {par.Key}");
-      }
-    }
-
     protected override void OnLoad()
     {
       base.OnLoad();
@@ -208,11 +163,10 @@ namespace gcgcg
         Close();
 
       if (estadoTeclado.IsKeyPressed(Keys.Space))
-        GrafoCenaProximo();
+        objetoSelecionado = Grafocena.GrafoCenaProximo(mundo, objetoSelecionado, grafoLista);
 
       if (estadoTeclado.IsKeyPressed(Keys.G))
-        GrafoCenaImprimir();
-
+        Grafocena.GrafoCenaImprimir(mundo, grafoLista);
       if (estadoTeclado.IsKeyPressed(Keys.P))
       {
         if (objetoSelecionado != null)
@@ -292,8 +246,10 @@ namespace gcgcg
       GL.BindVertexArray(0);
       GL.UseProgram(0);
 
+#if CG_Gizmo
       GL.DeleteBuffer(_vertexBufferObject_sruEixos);
       GL.DeleteVertexArray(_vertexArrayObject_sruEixos);
+#endif
 
       GL.DeleteProgram(_shaderVermelha.Handle);
       GL.DeleteProgram(_shaderVerde.Handle);

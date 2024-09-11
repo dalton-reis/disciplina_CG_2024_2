@@ -8,9 +8,9 @@ using OpenTK.Graphics.OpenGL4;
 using System;
 using System.Collections.Generic;
 
-namespace gcgcg
+namespace CG_Biblioteca
 {
-  internal class Objeto  //TODO: deveria ser uma class abstract ..??
+  public class Objeto  //TODO: deveria ser uma class abstract ..??
   {
     // Objeto
     private readonly char rotulo;
