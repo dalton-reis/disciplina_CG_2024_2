@@ -1,9 +1,3 @@
-#define CG_OpenGL
-#define CG_Debug
-#define CG_Gizmo  // debugar gráfico.
-// #define CG_DirectX
-
-using CG_Biblioteca;
 using OpenTK.Graphics.OpenGL4;
 using System;
 using System.Collections.Generic;
@@ -12,7 +6,7 @@ namespace CG_Biblioteca
 {
   public class Objeto  //TODO: deveria ser uma class abstract ..??
   {
-    // Objeto
+    // Objeto _______________________________________
     private readonly char rotulo;
     public char Rotulo { get => rotulo; }
     protected Objeto paiRef;
@@ -30,14 +24,14 @@ namespace CG_Biblioteca
     private int _vertexBufferObject;
     private int _vertexArrayObject;
 
-    // BBox do objeto
+    // BBox do objeto _______________________________
     private readonly BBox bBox = new();
     public BBox Bbox()  //TODO: readonly
     {
       return bBox;
     }
 
-    // Transformações do objeto
+    // Transformações do objeto _____________________
     private Transformacao4D matriz = new();
     private static Transformacao4D matrizGlobal = new();
 
@@ -99,7 +93,7 @@ namespace CG_Biblioteca
 
     public void Desenhar(Transformacao4D matrizGrafo, Objeto objetoSelecionado)
     {
-#if CG_OpenGL && !CG_DirectX
+#if CG_OpenGL
       GL.PointSize(primitivaTamanho);
 
       GL.BindVertexArray(_vertexArrayObject);
@@ -112,24 +106,20 @@ namespace CG_Biblioteca
         _shaderObjeto.SetMatrix4("transform", matrizGrafo.ObterDadosOpenTK());
         _shaderObjeto.Use();
         GL.DrawArrays(primitivaTipo, 0, pontosLista.Count);
-#elif CG_DirectX && !CG_OpenGL
-      Console.WriteLine(" .. Coloque aqui o seu código em DirectX");
-#elif (CG_DirectX && CG_OpenGL) || (!CG_DirectX && !CG_OpenGL)
-      Console.WriteLine(" .. ERRO de Render - escolha OpenGL ou DirectX !!");
-#endif
-#if CG_Gizmo
         if (objetoSelecionado == this)
         {
           matrizGlobal = ObjetoMatrizGlobal(matriz);
           bBox.Atualizar(matrizGlobal, pontosLista);
+#if CG_Gizmo && CG_BBox
           bBox.Desenhar();
-        }
 #endif
+        }
       }
       for (var i = 0; i < objetosLista.Count; i++)
       {
         objetosLista[i].Desenhar(matrizGrafo, objetoSelecionado);
       }
+#endif
     }
 
     #region Objeto: CRUD
@@ -172,6 +162,7 @@ namespace CG_Biblioteca
     }
 
     #region Objeto: Grafo de Cena
+    //TODO: estes métodos não deveriam estar na classe GrafoCena da CG_Biblioteca?
 
     public Objeto GrafocenaBusca(char _rotulo)
     {

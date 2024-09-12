@@ -49,20 +49,17 @@ namespace CG_Biblioteca
     public static void Diretivas()
     {
       Console.WriteLine("_ Diretivas de Compilação: _______ \n");
-#if CG_DEBUG
-      Console.WriteLine("Debug - versão do código para depurar");
-#endif      
-#if CG_Gizmo
-      Console.WriteLine("CG_Gizmo - objetos gráficos para depurar");
-#endif
 #if CG_OpenGL
       Console.WriteLine("CG_OpenGL - renderizado OpenGL");
 #endif
-#if CG_OpenTK
-      Console.WriteLine("CG_OpenGL - renderizado OpenTK");
+#if CG_Gizmo
+      Console.WriteLine("CG_Gizmo - objetos gráficos para depurar");
 #endif
-#if CG_DirectX
-      Console.WriteLine("CG_DirectX - renderizado DirectX");
+#if CG_DEBUG
+      Console.WriteLine("CG_DEBUG - versão do código para depurar");
+#endif      
+#if CG_BBox
+      Console.WriteLine("CG_BBox - exibe as BBox do objeto selecionado");
 #endif
 #if CG_Privado
       Console.WriteLine("CG_Privado - código do professor");

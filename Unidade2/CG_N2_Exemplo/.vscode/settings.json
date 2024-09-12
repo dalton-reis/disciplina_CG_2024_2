@@ -1,6 +1,3 @@
 {
-  "dotnet.defaultSolution": "CG_N2_Exemplo.sln",
-  "cSpell.words": [
-    "gcgcg"
-  ]
+  "dotnet.defaultSolution": "CG_N2_Exemplo.sln"
 }

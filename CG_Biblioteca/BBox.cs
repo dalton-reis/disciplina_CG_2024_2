@@ -1,7 +1,3 @@
-#define CG_Debug
-#define CG_Gizmo  // debugar gráfico.
-#define CG_OpenGL // render OpenGL.
-
 using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
@@ -13,9 +9,10 @@ namespace CG_Biblioteca
     private double menorX, menorY, menorZ, maiorX, maiorY, maiorZ;
     private readonly Ponto4D centro = new();
 
+#if CG_OpenGL
     private int _vertexBufferObject_bbox;
     private int _vertexArrayObject_bbox;
-
+#endif
     private readonly Shader _shaderAmarela;
 
     public BBox()
@@ -114,12 +111,10 @@ namespace CG_Biblioteca
     /// Obter ponto do centro da BBox.
     public Ponto4D ObterCentro => centro;
 
-#if CG_Gizmo
     public void Desenhar()
     {
-
-#if CG_OpenGL && !CG_DirectX
-
+#if CG_Gizmo
+#if CG_OpenGL
       float[] _bbox =
       {
         (float) menorX,   (float) menorY,   0.0f, // A - canto esquerdo/inferior
@@ -145,14 +140,9 @@ namespace CG_Biblioteca
       GL.DrawArrays(PrimitiveType.LineLoop, 0, ((_bbox.Length - 1) / 3));   // desenha a BBox
       GL.PointSize(10);
       GL.DrawArrays(PrimitiveType.Points, ((_bbox.Length - 1) / 3), 1);     // desenha ponto centro BBox
-
-#elif CG_DirectX && !CG_OpenGL
-      Console.WriteLine(" .. Coloque aqui o seu código em DirectX");
-#elif (CG_DirectX && CG_OpenGL) || (!CG_DirectX && !CG_OpenGL)
-      Console.WriteLine(" .. ERRO de Render - escolha OpenGL ou DirectX !!");
+#endif
 #endif
     }
-#endif
 
 #if CG_Debug
     public override string ToString()
@@ -167,6 +157,5 @@ namespace CG_Biblioteca
       return (retorno);
     }
 #endif
-
   }
 }

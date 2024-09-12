@@ -1,5 +1,3 @@
-#define CG_Debug
-
 using CG_Biblioteca;
 using OpenTK.Graphics.OpenGL4;
 using System.Collections.Generic;

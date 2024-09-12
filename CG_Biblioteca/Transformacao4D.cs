@@ -1,6 +1,3 @@
-#define CG_Debug
-#define CG_OpenTK
-
 using System;
 using OpenTK.Mathematics;
 
@@ -32,7 +29,7 @@ namespace CG_Biblioteca
     {
     }
 
-#if CG_OpenTK
+#if CG_OpenGL
     ///               [ matrix[ 0](11) matrix[ 4](21) matrix[ 8](31) matrix[12](41) ]
     ///   Transform = [ matrix[ 1](12) matrix[ 5](22) matrix[ 9](32) matrix[13](42) ]
     ///               [ matrix[ 2](13) matrix[ 6](23) matrix[10](33) matrix[14](43) ]

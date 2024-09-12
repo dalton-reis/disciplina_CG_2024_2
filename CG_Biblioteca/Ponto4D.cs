@@ -1,5 +1,3 @@
-#define CG_Debug
-
 namespace CG_Biblioteca
 {
   /// <summary>

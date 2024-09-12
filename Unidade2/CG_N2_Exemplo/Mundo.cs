@@ -1,11 +1,7 @@
-﻿#define CG_DEBUG
-#define CG_Gizmo      
-#define CG_OpenGL      
-// #define CG_OpenTK
-// #define CG_DirectX      
-// #define CG_Privado  
-
-//FIXME: as diretivas parecem não funcionar direito. Aqui neste projeto sim, mas quando estão na CG_Biblioteca não funciona.
+﻿/*
+ As constantes dos pré-processors estão nos arquivos ".csproj"
+ desse projeto e da CG_Biblioteca.
+*/
 
 using CG_Biblioteca;
 using OpenTK.Graphics.OpenGL4;
@@ -202,7 +198,7 @@ namespace gcgcg
       Ponto4D mousePonto = new(MousePosition.X, MousePosition.Y);
       Ponto4D sruPonto = Utilitario.NDC_TelaSRU(janelaLargura, janelaAltura, mousePonto);
 
-      if (estadoTeclado.IsKeyDown(Keys.LeftShift))
+      if (estadoTeclado.IsKeyPressed(Keys.LeftShift))
       {
         if (mouseMovtoPrimeiro)
         {
@@ -259,10 +255,10 @@ namespace gcgcg
       base.OnUnload();
     }
 
-#if CG_Gizmo
     private void Gizmo_Sru3D()
     {
-#if CG_OpenGL && !CG_DirectX
+#if CG_Gizmo
+#if CG_OpenGL
       var transform = Matrix4.Identity;
       GL.BindVertexArray(_vertexArrayObject_sruEixos);
       // EixoX
@@ -277,13 +273,9 @@ namespace gcgcg
       _shaderAzul.SetMatrix4("transform", transform);
       _shaderAzul.Use();
       GL.DrawArrays(PrimitiveType.Lines, 4, 2);
-#elif CG_DirectX && !CG_OpenGL
-      Console.WriteLine(" .. Coloque aqui o seu código em DirectX");
-#elif (CG_DirectX && CG_OpenGL) || (!CG_DirectX && !CG_OpenGL)
-      Console.WriteLine(" .. ERRO de Render - escolha OpenGL ou DirectX !!");
+#endif
 #endif
     }
-#endif
 
   }
 }
