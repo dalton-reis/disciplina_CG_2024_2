@@ -44,6 +44,8 @@ namespace CG_Biblioteca
         }
 
         ProcessarCentro();
+
+        AtualizarRender();
       }
     }
 
