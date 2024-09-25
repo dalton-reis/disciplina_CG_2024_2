@@ -42,7 +42,7 @@ namespace CG_Biblioteca
     public static void GrafoCenaImprimir(Objeto mundo, Dictionary<char, Objeto> grafoLista)
     {
       GrafocenaAtualizar(mundo, grafoLista);
-      Console.WriteLine();
+      Console.WriteLine("__________________________________ \n");
       foreach (var par in grafoLista)
       {
         // Console.WriteLine($"Chave: {par.Key}, Valor: {par.Value}");

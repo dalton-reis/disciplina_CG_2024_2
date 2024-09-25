@@ -180,6 +180,7 @@ namespace CG_Biblioteca
 #if CG_Debug
     public override string ToString()
     {
+      Console.WriteLine("__________________________________ \n");
       string retorno;
       retorno = "__ Transformacao4D: " + "\n";
       retorno += "|" + ObterElemento(0) + " | " + ObterElemento(4) + " | " + ObterElemento(8) + " | " + ObterElemento(12) + "\n";

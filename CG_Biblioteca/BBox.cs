@@ -69,6 +69,19 @@ namespace CG_Biblioteca
       }
     }
 
+    private void AtualizarRender()
+    {
+      float[] _bbox = BBoxConverter();
+
+      _vertexBufferObject_bbox = GL.GenBuffer();
+      GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject_bbox);
+      GL.BufferData(BufferTarget.ArrayBuffer, _bbox.Length * sizeof(float), _bbox, BufferUsageHint.StaticDraw);
+      _vertexArrayObject_bbox = GL.GenVertexArray();
+      GL.BindVertexArray(_vertexArrayObject_bbox);
+      GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+      GL.EnableVertexAttribArray(0);
+    }
+
     /// Calcula o ponto do centro da BBox.
     private void ProcessarCentro()
     {
@@ -115,22 +128,7 @@ namespace CG_Biblioteca
     {
 #if CG_Gizmo
 #if CG_OpenGL
-      float[] _bbox =
-      {
-        (float) menorX,   (float) menorY,   0.0f, // A - canto esquerdo/inferior
-        (float) maiorX,   (float) menorY,   0.0f, // B - canto direito/inferior
-        (float) maiorX,   (float) maiorY,   0.0f, // C - canto direito/superior
-        (float) menorX,   (float) maiorY,   0.0f, // D - canto esquerdo/superior
-        (float) centro.X, (float) centro.Y, 0.0f  // E - centro BBox
-      };
-
-      _vertexBufferObject_bbox = GL.GenBuffer();
-      GL.BindBuffer(BufferTarget.ArrayBuffer, _vertexBufferObject_bbox);
-      GL.BufferData(BufferTarget.ArrayBuffer, _bbox.Length * sizeof(float), _bbox, BufferUsageHint.StaticDraw);
-      _vertexArrayObject_bbox = GL.GenVertexArray();
-      GL.BindVertexArray(_vertexArrayObject_bbox);
-      GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
-      GL.EnableVertexAttribArray(0);
+      float[] _bbox = BBoxConverter();
 
       GL.BindVertexArray(_vertexArrayObject_bbox);
       var transform = Matrix4.Identity;
@@ -144,9 +142,23 @@ namespace CG_Biblioteca
 #endif
     }
 
+    private float[] BBoxConverter()
+    {
+      float[] _bbox =
+      {
+        (float) menorX,   (float) menorY,   0.0f, // A - canto esquerdo/inferior
+        (float) maiorX,   (float) menorY,   0.0f, // B - canto direito/inferior
+        (float) maiorX,   (float) maiorY,   0.0f, // C - canto direito/superior
+        (float) menorX,   (float) maiorY,   0.0f, // D - canto esquerdo/superior
+        (float) centro.X, (float) centro.Y, 0.0f  // E - centro BBox
+      };
+      return _bbox;
+    }
+
 #if CG_Debug
     public override string ToString()
     {
+      System.Console.WriteLine("__________________________________ \n");
       string retorno;
       retorno = "_____ BBox: \n";
       retorno += "menorX: " + menorX + " - maiorX: " + maiorX + "\n";

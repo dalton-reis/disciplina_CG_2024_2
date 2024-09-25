@@ -35,6 +35,15 @@ namespace CG_Biblioteca
     private Transformacao4D matriz = new();
     private static Transformacao4D matrizGlobal = new();
 
+    /// Matrizes temporarias que sempre sao inicializadas com matriz Identidade entao podem ser "static".
+    private static Transformacao4D matrizTmpTranslacao = new();
+    private static Transformacao4D matrizTmpTranslacaoInversa = new();
+    private static Transformacao4D matrizTmpEscala = new();
+    private static Transformacao4D matrizTmpRotacao = new();
+    private static Transformacao4D matrizTmpGlobal = new();
+    private char eixoRotacao = 'z';
+    // public void TrocaEixoRotacao(char eixo) => eixoRotacao = eixo; [TODO: usar?]
+
 
     public Objeto(Objeto _paiRef, ref char _rotulo, Objeto objetoFilho = null)
     {
@@ -58,8 +67,37 @@ namespace CG_Biblioteca
       }
     }
 
+    public void ObjetoRemover()
+    {
+      // remover objetos filhos
+      while (objetosLista.Count > 0)
+      {
+        objetosLista[0].ObjetoRemover();
+      }
+
+      paiRef.objetosLista.Remove(this);
+
+      // remover os filhos dele da lista de objetos
+      objetosLista.Remove(this);
+
+      // remover objeto
+      OnUnload();
+      objetosLista.Clear();
+      pontosLista.Clear();
+      // private BBox bBox = new BBox();  //TODO: preciso remover estes objetos?
+      // private Transformacao4D matriz = new Transformacao4D();
+      // private static Transformacao4D matrizTmpTranslacao = new Transformacao4D();
+      // private static Transformacao4D matrizTmpTranslacaoInversa = new Transformacao4D();
+      // private static Transformacao4D matrizTmpEscala = new Transformacao4D();
+      // private static Transformacao4D matrizTmpRotacao = new Transformacao4D();
+      // private static Transformacao4D matrizGlobal = new Transformacao4D();
+
+      //this = null; não é permitido
+    }
+
     public void ObjetoAtualizar()
     {
+      //FIXME: deveria chamar OnUnload() mas sem ir para os filhos
       float[] vertices = new float[pontosLista.Count * 3];
       int ptoLista = 0;
       for (int i = 0; i < vertices.Length; i += 3)
@@ -79,6 +117,9 @@ namespace CG_Biblioteca
       GL.BindVertexArray(_vertexArrayObject);
       GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
       GL.EnableVertexAttribArray(0);
+
+      matrizGlobal = ObjetoMatrizGlobal(matriz);    // Atualiza a matrizGlobal
+      bBox.Atualizar(matrizGlobal, pontosLista);
     }
 
     public Transformacao4D ObjetoMatrizGlobal(Transformacao4D matrizGlobalPai)
@@ -109,9 +150,11 @@ namespace CG_Biblioteca
         if (objetoSelecionado == this)
         {
           matrizGlobal = ObjetoMatrizGlobal(matriz);
-          bBox.Atualizar(matrizGlobal, pontosLista);
-#if CG_Gizmo && CG_BBox
+          // bBox.Atualizar(matrizGlobal, pontosLista);
+#if CG_Gizmo
+#if CG_BBox
           bBox.Desenhar();
+#endif
 #endif
         }
       }
@@ -161,6 +204,36 @@ namespace CG_Biblioteca
       return matrizGlobal.MultiplicarPonto(mousePto);
     }
 
+    public int PontoMaisPerto(Ponto4D mousePto, bool remover = true)
+    {
+      var iMaisPerto = 0;
+      double distMaisPerto = Matematica.DistanciaQuadrado(mousePto, pontosLista[iMaisPerto]); // assumindo polígono sempre tem mínimo dois pontos
+      double distTMP;
+      for (var i = 1; i < pontosLista.Count; i++) // 2a elemento
+      {
+        distTMP = Matematica.DistanciaQuadrado(mousePto, pontosLista[i]);
+        if (distTMP < distMaisPerto)
+        {
+          distMaisPerto = distTMP;
+          iMaisPerto = i;
+        }
+      }
+      PontosAlterar(mousePto, iMaisPerto);
+
+      if (remover)
+      {
+        pontosLista.RemoveAt(iMaisPerto);
+        if (pontosLista.Count < 2)  // objeto no mínimo deve ter dois vértices
+        {
+          this.ObjetoRemover();
+          return -1;
+        }
+        else
+          ObjetoAtualizar();
+      }
+      return iMaisPerto;
+    }
+
     #region Objeto: Grafo de Cena
     //TODO: estes métodos não deveriam estar na classe GrafoCena da CG_Biblioteca?
 
@@ -202,6 +275,99 @@ namespace CG_Biblioteca
 
     #endregion
 
+    #region Objeto: Transformações Geométricas
+
+    public void MatrizImprimir()
+    {
+      System.Console.WriteLine(matriz);
+
+      matrizGlobal = ObjetoMatrizGlobal(matriz);
+      System.Console.WriteLine(matrizGlobal);
+    }
+    public void MatrizAtribuirIdentidade()
+    {
+      matriz.AtribuirIdentidade();
+      ObjetoAtualizar();
+    }
+    public void MatrizTranslacaoXYZ(double tx, double ty, double tz)
+    {
+      Transformacao4D matrizTranslate = new Transformacao4D();
+      matrizTranslate.AtribuirTranslacao(tx, ty, tz);
+      matriz = matrizTranslate.MultiplicarMatriz(matriz);
+      ObjetoAtualizar();
+    }
+    public void MatrizEscalaXYZ(double Sx, double Sy, double Sz)
+    {
+      Transformacao4D matrizScale = new Transformacao4D();
+      matrizScale.AtribuirEscala(Sx, Sy, Sz);
+      matriz = matrizScale.MultiplicarMatriz(matriz);
+      ObjetoAtualizar();
+    }
+
+    public void MatrizEscalaXYZBBox(double Sx, double Sy, double Sz)
+    {
+      matrizTmpGlobal.AtribuirIdentidade();
+      Ponto4D pontoPivo = bBox.ObterCentro;
+
+      matrizTmpTranslacao.AtribuirTranslacao(-pontoPivo.X, -pontoPivo.Y, -pontoPivo.Z); // Inverter sinal
+      matrizTmpGlobal = matrizTmpTranslacao.MultiplicarMatriz(matrizTmpGlobal);
+
+      matrizTmpEscala.AtribuirEscala(Sx, Sy, Sz);
+      matrizTmpGlobal = matrizTmpEscala.MultiplicarMatriz(matrizTmpGlobal);
+
+      matrizTmpTranslacaoInversa.AtribuirTranslacao(pontoPivo.X, pontoPivo.Y, pontoPivo.Z);
+      matrizTmpGlobal = matrizTmpTranslacaoInversa.MultiplicarMatriz(matrizTmpGlobal);
+
+      matriz = matriz.MultiplicarMatriz(matrizTmpGlobal);
+
+      ObjetoAtualizar();
+    }
+    public void MatrizRotacaoEixo(double angulo)
+    {
+      switch (eixoRotacao)  // TODO: ainda não uso no exemplo
+      {
+        case 'x':
+          matrizTmpRotacao.AtribuirRotacaoX(Transformacao4D.DEG_TO_RAD * angulo);
+          break;
+        case 'y':
+          matrizTmpRotacao.AtribuirRotacaoY(Transformacao4D.DEG_TO_RAD * angulo);
+          break;
+        case 'z':
+          matrizTmpRotacao.AtribuirRotacaoZ(Transformacao4D.DEG_TO_RAD * angulo);
+          break;
+        default:
+          Console.WriteLine("opção de eixoRotacao: ERRADA!");
+          break;
+      }
+      ObjetoAtualizar();
+    }
+    public void MatrizRotacao(double angulo)
+    {
+      MatrizRotacaoEixo(angulo);
+      matriz = matrizTmpRotacao.MultiplicarMatriz(matriz);
+      ObjetoAtualizar();
+    }
+    public void MatrizRotacaoZBBox(double angulo)
+    {
+      matrizTmpGlobal.AtribuirIdentidade();
+      Ponto4D pontoPivo = bBox.ObterCentro;
+
+      matrizTmpTranslacao.AtribuirTranslacao(-pontoPivo.X, -pontoPivo.Y, -pontoPivo.Z); // Inverter sinal
+      matrizTmpGlobal = matrizTmpTranslacao.MultiplicarMatriz(matrizTmpGlobal);
+
+      MatrizRotacaoEixo(angulo);
+      matrizTmpGlobal = matrizTmpRotacao.MultiplicarMatriz(matrizTmpGlobal);
+
+      matrizTmpTranslacaoInversa.AtribuirTranslacao(pontoPivo.X, pontoPivo.Y, pontoPivo.Z);
+      matrizTmpGlobal = matrizTmpTranslacaoInversa.MultiplicarMatriz(matrizTmpGlobal);
+
+      matriz = matriz.MultiplicarMatriz(matrizTmpGlobal);
+
+      ObjetoAtualizar();
+    }
+
+    #endregion
+
     public void OnUnload()
     {
       foreach (var objeto in objetosLista)
@@ -219,9 +385,49 @@ namespace CG_Biblioteca
       // GL.DeleteProgram(_shaderObjeto.Handle);
     }
 
+    public bool ScanLine(Ponto4D ptoClique, ref Objeto objetoSelecionado)
+    {
+      if (rotulo != '@')
+      {
+        matrizGlobal = ObjetoMatrizGlobal(matriz);    // Atualiza a matrizGlobal
+        bBox.Atualizar(matrizGlobal, pontosLista);
+
+        // Teste de seleção do polígono usando a BBox  
+        if (bBox.Dentro(ptoClique))
+        {
+          // Teste de seleção do polígono usando o algoritmo ScanLine  
+          ushort paridade = 0;
+          if (pontosLista.Count >= 2)
+          {
+            for (var i = 0; i < (pontosLista.Count - 1); i++)
+            {
+              if (Matematica.ScanLine(ptoClique, matrizGlobal.MultiplicarPonto(pontosLista[i]), matrizGlobal.MultiplicarPonto(pontosLista[i + 1])))
+                paridade++;
+            }
+            if (Matematica.ScanLine(ptoClique, matrizGlobal.MultiplicarPonto(pontosLista[pontosLista.Count - 1]), matrizGlobal.MultiplicarPonto(pontosLista[0]))) // último/primeiro segmento
+              paridade++;
+          }
+          if ((paridade % 2) != 0)  // dentro polígono
+          {
+            objetoSelecionado = this;     // dentro polígono
+            return true;
+          }
+        }
+      }
+
+      // fora polígono
+      foreach (var objeto in objetosLista)
+      {
+        if (objeto.ScanLine(ptoClique, ref objetoSelecionado))
+          return true;
+      }
+      return false;
+    }
+
 #if CG_Debug
     protected string ImprimeToString()
     {
+      Console.WriteLine("__________________________________ \n");
       string retorno;
       retorno = "__ Objeto Original: " + rotulo + "\n";
       for (var i = 0; i < pontosLista.Count; i++)
