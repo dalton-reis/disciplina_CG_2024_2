@@ -131,7 +131,7 @@ A matriz $identidade$ é o elemento neutro na multiplicação de matrizes.
 > \[!WARNING]
 > Esta transformação é em relação a origem do sistema de referência.  
 
-A translação de um ponto $P(x,y,z)$ no plano ocorre pela adição ás coordenadas de $P$ dos valores de deslocamento $tx$, $ty$ e $tz$, e por ser uma adição o elemento neutro é zero.  
+A translação de um ponto $P(x,y,z)$ no plano ocorre pela adição ás coordenadas de $P$ dos valores de deslocamento $dx$, $dy$ e $dz$, e por ser uma adição o elemento neutro é zero.  
 
 | Transformação | operação          | elemento neutro                      |
 | ------------- | ----------------- | ------------------------------------ |
@@ -143,9 +143,9 @@ A translação de um ponto $P(x,y,z)$ no plano ocorre pela adição ás coordena
 P(x,y,z) \Rightarrow P(x',y',z')
 \space\space\space\space\space\space
 \begin{matrix}
-x + tx = x' \\
-y + ty = y' \\
-z + tz = z'
+x + dx = x' \\
+y + dy = y' \\
+z + dz = z'
 \end{matrix}
 ```
 
@@ -176,9 +176,9 @@ z + tz = z'
 \end{bmatrix}
 \times
 \begin{bmatrix}
-  1 & 0 & 0 & \textcolor{red}{tx} \\
-  0 & 1 & 0 & \textcolor{red}{ty} \\
-  0 & 0 & 1 & \textcolor{red}{tz} \\
+  1 & 0 & 0 & \textcolor{red}{dx} \\
+  0 & 1 & 0 & \textcolor{red}{dy} \\
+  0 & 0 & 1 & \textcolor{red}{dz} \\
   0 & 0 & 0 & 1
  \end{bmatrix}
  =
@@ -219,9 +219,9 @@ Fator de escala no intervalo ]0..1\[ reduz
 P(x,y,z) \Rightarrow P(x',y',z')
 \space\space\space\space\space\space
 \begin{matrix}
-x \times tx = x' \\
-y \times ty = y' \\
-z \times tz = z'
+x \times sx = x' \\
+y \times sy = y' \\
+z \times sz = z'
 \end{matrix}
 ```
 
