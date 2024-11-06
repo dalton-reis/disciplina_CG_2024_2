@@ -5,12 +5,12 @@
 
 using CG_Biblioteca;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using System.Collections.Generic;
-using OpenTK.Mathematics;
 
 namespace gcgcg
 {
@@ -21,7 +21,7 @@ namespace gcgcg
     private char rotuloAtual = '?';
     private Dictionary<char, Objeto> grafoLista = [];
     private Objeto objetoSelecionado = null;
-
+    private Transformacao4D matrizGrafo = new();
 
 #if CG_Gizmo
     private readonly float[] _sruEixos =
@@ -78,8 +78,8 @@ namespace gcgcg
       #endregion
 #endif
 
-      #region Objeto: polígono qualquer  
-      List<Ponto4D> pontosPoligono =
+      #region Objeto: polígono qualquer, só para testes e ajudar no desenvolvimento  
+      List<Ponto4D> pontosPoligonoBandeiraA =
       [
         new Ponto4D(0.25, 0.25),
         new Ponto4D(0.75, 0.25),
@@ -87,8 +87,9 @@ namespace gcgcg
         new Ponto4D(0.50, 0.50),
         new Ponto4D(0.25, 0.75),
       ];
-      objetoSelecionado = new Poligono(mundo, ref rotuloAtual, pontosPoligono);
+      objetoSelecionado = new Poligono(mundo, ref rotuloAtual, pontosPoligonoBandeiraA);
       #endregion
+      
       #region NÃO USAR: declara um objeto filho ao polígono
       objetoSelecionado = new Ponto(objetoSelecionado, ref rotuloAtual, new Ponto4D(0.50, 0.75));
       #endregion
@@ -141,7 +142,8 @@ namespace gcgcg
 
       GL.Clear(ClearBufferMask.ColorBufferBit);
 
-      mundo.Desenhar(new Transformacao4D(), objetoSelecionado);
+      matrizGrafo.AtribuirIdentidade();
+      mundo.Desenhar(matrizGrafo, objetoSelecionado);
 
 #if CG_Gizmo
       Gizmo_Sru3D();
@@ -155,15 +157,16 @@ namespace gcgcg
 
       #region Teclado
       var estadoTeclado = KeyboardState;
-      if (estadoTeclado.IsKeyDown(Keys.Escape))
+      if (estadoTeclado.IsKeyPressed(Keys.Escape))
         Close();
 
+      #region Funções de apoio para o desenvolvimento. Não é do enunciado  
       if (estadoTeclado.IsKeyPressed(Keys.Space))
         objetoSelecionado = Grafocena.GrafoCenaProximo(mundo, objetoSelecionado, grafoLista);
 
-      if (estadoTeclado.IsKeyPressed(Keys.G))
+      if (estadoTeclado.IsKeyPressed(Keys.F))
         Grafocena.GrafoCenaImprimir(mundo, grafoLista);
-      if (estadoTeclado.IsKeyPressed(Keys.P))
+      if (estadoTeclado.IsKeyPressed(Keys.T))
       {
         if (objetoSelecionado != null)
           Console.WriteLine(objetoSelecionado);
@@ -191,6 +194,7 @@ namespace gcgcg
         objetoSelecionado.PontosApagar();
       }
       #endregion
+      #endregion
 
       #region  Mouse
       int janelaLargura = ClientSize.X;
@@ -215,7 +219,7 @@ namespace gcgcg
           objetoSelecionado.ObjetoAtualizar();
         }
       }
-      if (estadoTeclado.IsKeyDown(Keys.LeftShift))
+      if (estadoTeclado.IsKeyPressed(Keys.LeftShift))
       {
         objetoSelecionado.PontosAlterar(sruPonto, 0);
         objetoSelecionado.ObjetoAtualizar();

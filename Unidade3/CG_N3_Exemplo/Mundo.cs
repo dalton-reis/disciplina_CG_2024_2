@@ -274,7 +274,7 @@ namespace gcgcg
       // ## 9. Interação: BBox
       // Utilize o mouse para clicar na tela com botão esquerdo para selecionar o polígono testando primeiro se o ponto do mouse está dentro da BBox do polígono e depois usando o algoritmo Scan Line.  
       // Caso o polígono seja selecionado se deve exibir a sua BBbox, caso contrário a variável objetoSelecionado deve ser "null", e assim nenhum contorno de BBox deve ser exibido.  
-      if (MouseState.IsButtonPressed(MouseButton.Left))
+      if (MouseState.IsButtonPressed(MouseButton.Left) && objetoNovo == null)
       {
         Console.WriteLine("MouseState.IsButtonPressed(MouseButton.Left)");
         Console.WriteLine("__ Valores do Espaço de Tela");

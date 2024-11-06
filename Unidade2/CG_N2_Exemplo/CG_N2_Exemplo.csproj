@@ -10,7 +10,7 @@
       CG_Gizmo;
       CG_Debug;
       CG_BBox;
-      <!-- CG_Privado; -->
+      CG_Privado;
       </DefineConstants>
   </PropertyGroup>
 

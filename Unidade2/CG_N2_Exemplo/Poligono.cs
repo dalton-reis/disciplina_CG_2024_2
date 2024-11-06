@@ -23,6 +23,7 @@ namespace gcgcg
 #if CG_Debug
     public override string ToString()
     {
+      System.Console.WriteLine("__________________________________ \n");
       string retorno;
       retorno = "__ Objeto Poligono _ Tipo: " + PrimitivaTipo + " _ Tamanho: " + PrimitivaTamanho + "\n";
       retorno += base.ImprimeToString();
